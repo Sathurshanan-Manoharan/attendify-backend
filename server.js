@@ -1,15 +1,13 @@
 //starting the server
 const express = require("express");
 const mongoose = require("mongoose");
-const morgan = require("morgan");
 
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
 
 const DB = process.env.DATABASE;
-app.use(express.json());
-app.use(morgan("dev"));
+
 
 //connecting to the database
 mongoose.connect(DB).then((conn) => {
