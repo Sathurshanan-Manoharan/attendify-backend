@@ -1,12 +1,22 @@
-//starting the server 
-const express = require('express');
-const app = express();
+//starting the server
+const express = require("express");
+const mongoose = require("mongoose");
+const morgan = require("morgan");
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
+const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
+const app = require("./app");
+
+const DB = process.env.DATABASE;
+app.use(express.json());
+app.use(morgan("dev"));
+
+//connecting to the database
+mongoose.connect(DB).then((conn) => {
+  console.log("Database Connection Successful");
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log("Server is running on port 3000");
 });
-
