@@ -1,4 +1,4 @@
-const{timeTableModel,singleSession}=require('../models/timeTableModel') ;
+const{timeTableModel}=require('../models/timeTableModel') ;
 
 const createTimeTable = async(req,res)=>{
     try{
