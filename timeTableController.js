@@ -1,4 +1,4 @@
-const{timeTableModel}=require('../models/timeTableModel') ;
+const{timeTableModel}= require('../models/timeTableModel') ;
 
 const createTimeTable = async(req,res)=>{
     try{
@@ -19,4 +19,27 @@ const createTimeTable = async(req,res)=>{
         })
     }
 };
-module.exports={createTimeTable};
+
+
+const readTimetable = async (req, res) => {
+    try {
+    
+        const timetableData = await timeTableModel.find();
+
+        res.status(201).json({
+            status: "success",
+            results: timetableData.length,
+            data: {
+                timetable: timetableData,
+            },
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};
+
+
+module.exports={createTimeTable,readTimetable};
