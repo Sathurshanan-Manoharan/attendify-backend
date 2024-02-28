@@ -23,6 +23,7 @@ const createTimeTable = async(req,res)=>{
 const updateTimetable = async(req, res) => {
     try {
         const { id } = req.params;
+        console.log(id);
 
         const { tutorialGroup, day, sessions } = req.body; //Get updated data
         const updatedTimetable  = await timeTableModel.findByIdAndUpdate(
