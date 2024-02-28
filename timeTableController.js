@@ -19,4 +19,26 @@ const createTimeTable = async(req,res)=>{
         })
     }
 };
+
+const updateTimetable = async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { tutorialGroup, day, sessions } = req.body; //Get updated data
+
+        const updatedTimetable  = await timeTableModel.findAndUpdate(
+            id,
+            { tutorialGroup, day, sessions },
+            { new: true}
+        );
+
+        if (!updateTimetable) {
+            return res.status(404).json({
+                status: "error",
+                message: "Timetable not found",
+            });
+        }
+
+        
+    }
+}
 module.exports={createTimeTable};
