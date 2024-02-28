@@ -35,4 +35,4 @@ const timeTableSchema = new mongoose.Schema({
 });
 
 const timeTableModel=mongoose.model("timetable",timeTableSchema);
-module.exports = { timeTableModel ,singleSession};
+module.exports = { timeTableModel};
