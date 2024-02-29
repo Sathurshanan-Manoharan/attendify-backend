@@ -44,16 +44,12 @@ exports.readTimetable = async (req, res) => {
 
 
 exports.updateTimetable = async(req, res) => {
-    res.send('GOT');
     try {
         
-        const  id  = req.params;
-        console.log(id);
-
-        const { tutorialGroup, day, sessions } = req.body; //Get updated data
+        const { id }  = req.params;
         const updatedTimetable  = await timeTableModel.findByIdAndUpdate(
-            { id },
-            { tutorialGroup, day, sessions },
+            id,
+            req.body,
             { new: true} //Return updated version
         )
 
