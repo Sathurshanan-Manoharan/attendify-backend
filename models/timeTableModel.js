@@ -20,6 +20,14 @@ const singleSession = {
         type:String,
         required:true,
     },
+    DegreeType:{
+        type:String,
+        required: true,
+   },
+   level:{
+        type:String,
+        required:true,
+  },
 };
 
 const timeTableSchema = new mongoose.Schema({
