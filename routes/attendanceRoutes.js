@@ -8,7 +8,7 @@ router
   .post(attendanceController.createAttendance);
 
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
-
+router.route("/upload").post(attendanceController.uploadAttendance);
 // router
 //   .route("/:id")
 //   .get(attendanceController.getAttendance)

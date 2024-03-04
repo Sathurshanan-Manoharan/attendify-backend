@@ -1,4 +1,27 @@
 const Attendance = require("../models/attendanceModel");
+const multer = require('multer');
+
+  const upload = multer({ dest: 'uploads/'});
+
+exports.uploadAttendance = async (req, res) => {
+
+    upload.single('csvFile')(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      } else if (err) {
+        return res.status(400).json({ error: 'Bad Request'});
+      }
+  
+      if (!req.file) {
+        return res.status(400).json({ error: 'No File Uploaded' });
+      }
+  
+      //Test if received
+      console.log('File Received', req.file);
+  
+      res.json({ message: "File uploaded successfully" });
+    })
+};
 
 exports.getAllAttendance = async (req, res) => {
   try {
