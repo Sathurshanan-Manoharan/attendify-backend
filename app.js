@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require("morgan");
 const attendanceRouter = require('./routes/attendanceRoutes');
 const timetableRouter = require('./routes/timeTableRoutes');
+const port = 5173;
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());

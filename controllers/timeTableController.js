@@ -1,4 +1,33 @@
 const timeTableModel = require('../models/timeTableModel') ;
+const multer = require('multer');
+
+const upload = multer({ dest: 'timetableupload'});
+
+
+exports.uploadTimetable = async (req, res) => {
+
+    upload.single('csvFile')(req, res, (err) => {
+
+      if (err instanceof multer.MulterError) {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      } else if (err) {
+        return res.status(400).json({ error: 'Bad Request'});
+      }
+  
+      if (!req.file) {
+        return res.status(400).json({ error: 'No File Uploaded' });
+      }
+  
+      //Test if received
+      console.log('File Received', req.file);
+      
+      
+        console.log('Course Type:', req.body.courseType);
+        console.log('Tutorial Groups:', req.body.tutorialGroups);
+        console.log('Level:', req.body.level);
+      res.json({ message: "File uploaded successfully" });
+    })
+};
 
 exports.createTimeTable = async(req,res)=>{
     try{
