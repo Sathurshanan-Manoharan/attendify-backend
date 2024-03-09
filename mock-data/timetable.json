@@ -13,7 +13,7 @@
               "lecturer": "Prof. Smith",
               "course": "Computer Science",
               "venue": "Lecture Hall 1",
-              "level": "Undergraduate",
+              "level": "5",
               "title": "Introduction to Programming"
             },
             {
@@ -23,7 +23,7 @@
               "lecturer": "Dr. Jones",
               "course": "Software Engineering",
               "venue": "Lecture Hall 2",
-              "level": "Undergraduate",
+              "level": "4",
               "title": "Limits and Derivatives"
             }
           ]
@@ -38,7 +38,7 @@
               "lecturer": "Mr. Lee",
               "course": "Computer Science",
               "venue": "Lab 3",
-              "level": "Undergraduate",
+              "level": "5",
               "title": "Arrays and Linked Lists"
             }
           ]
@@ -58,7 +58,7 @@
               "lecturer": "Dr. Brown",
               "course": "Software Engineering",
               "venue": "Lecture Hall 3",
-              "level": "Undergraduate",
+              "level": "5",
               "title": "Classes and objects"
             }
           ]
@@ -73,7 +73,7 @@
               "lecturer": "Ms. Garcia",
               "course": "Computer Science",
               "venue": "Lab 1",
-              "level": "Undergraduate",
+              "level": "4",
               "title": "Introduction to HTML and CSS"
             }
           ]
