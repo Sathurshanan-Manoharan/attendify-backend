@@ -2,7 +2,7 @@
 FROM node:latest
 
 # Define work directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose port
-EXPOSE 8080
+EXPOSE 3000
 
 # Run the app
 CMD ["node", "server.js"]
