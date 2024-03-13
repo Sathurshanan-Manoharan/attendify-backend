@@ -1,10 +1,22 @@
 const Attendance = require("../models/attendanceModel");
 const multer = require('multer');
 
-  const upload = multer({ dest: 'uploads/'});
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const originalFileName = file.originalname;
+    cb(null, originalFileName);
+  }
+});
 
+
+//Sends the csv data to the specified location
+const upload = multer({ storage: storage});
+
+//Receives CSV file
 exports.uploadAttendance = async (req, res) => {
-
     upload.single('csvFile')(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         return res.status(500).json({ error: 'Internal Server Error' });
@@ -22,6 +34,7 @@ exports.uploadAttendance = async (req, res) => {
       res.json({ message: "File uploaded successfully" });
     })
 };
+
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -58,6 +71,7 @@ exports.createAttendance = async (req, res) => {
   }
 };
 
+
 exports.markAttendance = async (req, res) => {
   try {
     const attendance = await Attendance.findById(req.params.id);
@@ -76,3 +90,4 @@ exports.markAttendance = async (req, res) => {
     });
   }
 };
+

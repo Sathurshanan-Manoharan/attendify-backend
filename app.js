@@ -12,8 +12,6 @@ app.use(cors({
     origin: 'http://localhost:5173'
 }));
 
-
-
 app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/timetable', timetableRouter);
 
