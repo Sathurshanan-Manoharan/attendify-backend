@@ -11,6 +11,7 @@ router
 
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
 router.route("/upload").post(attendanceController.uploadAttendance);
+//Processes csv and updates database
 router.route('/process-csv').get(onlineAttendanceController.processCSV);
 // router
 //   .route("/:id")
