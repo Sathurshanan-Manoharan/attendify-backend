@@ -1,38 +1,29 @@
-const mongoose = require("mongoose");
-const singleSession = {
-    startTime:{
-        type:String,
-        required:true,
-    },
-    endTime:{
-        type:String,
-        required:true,
-    },
-    lectureTitle:{
-        type:String,
-        required:true,
-    },
-    instructor:{
-        type:String,
-        required:true,
-    },
-    venue: {
-        type:String,
-        required:true,
-    },
-};
+const mongoose = require('mongoose');
 
-const timeTableSchema = new mongoose.Schema({
-    tutorialGroup:{
-        type:String,
-        required:true,
-    },
-    day: {
-        type:String,
-        required:true,
-    },
-    sessions: [singleSession],
+const sessionSchema = new mongoose.Schema({
+  start_time: { type: String, required: true },
+  end_time: { type: String, required: true },
+  lecture_title: { type: String, required: true },
+  instructor: { type: String, required: true },
+  venue: { type: String, required: true },
 });
 
-const timeTableModel=mongoose.model("timetable",timeTableSchema);
-module.exports = timeTableModel;
+const daySchema = new mongoose.Schema({
+  day: { type: String, required: true },
+  sessions: [sessionSchema],
+});
+
+const tutorialGroupSchema = new mongoose.Schema({
+  group_name: { type: String, required: true },
+  days: [daySchema],
+});
+
+const timetableSchema = new mongoose.Schema({
+  timetable_id: { type: String, required: true },
+  level_name: { type: String, required: true },
+  tutorial_groups: [tutorialGroupSchema],
+});
+
+const Timetable = mongoose.model('Timetable', timetableSchema);
+
+module.exports = Timetable;

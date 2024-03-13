@@ -1,4 +1,6 @@
+const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
+<<<<<<< HEAD
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -35,6 +37,9 @@ exports.uploadAttendance = async (req, res) => {
     })
 };
 
+=======
+const User = require("../models/userModel");
+>>>>>>> 6dce89b783e82896b4c500f0a091826fb9438d96
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -74,20 +79,52 @@ exports.createAttendance = async (req, res) => {
 
 exports.markAttendance = async (req, res) => {
   try {
-    const attendance = await Attendance.findById(req.params.id);
-    console.log(req.params.id);
-    attendance.students_present.push(req.body.studentId);
+    const currentTime = moment().tz('Asia/Colombo');
+
+    const user = await User.findOne({ uid: req.params.id });
+
+    const attendance = await Attendance.findOneAndUpdate(
+      {
+        venue: req.body.venue,
+        start_time: { $lte: currentTime },
+        end_time: { $gte: currentTime },
+      },
+      { $addToSet: { students_present: user.iitId } },
+      { new: true }
+    );
+
+    if (!attendance) {
+      res.status(404).json({
+        status: 'fail',
+        message: 'No attendance found',
+      });
+      return; // Stop further execution
+    }
+
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
         attendance,
       },
     });
   } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
+    console.error('Error in markAttendance:', err);
+
+    if (err.name === 'ValidationError') {
+      res.status(400).json({
+        status: 'fail',
+        message: err.message,
+      });
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
   }
+<<<<<<< HEAD
 };
 
+=======
+};
+>>>>>>> 6dce89b783e82896b4c500f0a091826fb9438d96

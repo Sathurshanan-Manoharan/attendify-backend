@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Adib Mubarak",
+    "email": "adib.20221609@iit.ac.lk",
+    "uowId": "W1956200",
+    "iitId": "20221609",
+    "tutorialGroup": "B",
+    "degreeType": "SE",
+    "year": "L5",
+    "uid": "043DEAA8672681"
+  },
+  {
+    "name": "Rishen Samaranayake",
+    "email": "anthony.20221829@iit.ac.lk",
+    "uowId": "W1985613",
+    "iitId": "20221609",
+    "tutorialGroup": "A",
+    "degreeType": "SE",
+    "year": "L5",
+    "uid": "041932A8672681"
+  },
+  {
+    "name": "Inoj Hettiarachchi",
+    "email": "inoj.20221934@iit.ac.lk",
+    "uowId": "W1985664",
+    "iitId": "20221934",
+    "tutorialGroup": "C",
+    "degreeType": "SE",
+    "year": "L5",
+    "uid": "04CA7DA4672681"
+  }
+]
