@@ -1,6 +1,5 @@
 const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
-<<<<<<< HEAD
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -37,9 +36,7 @@ exports.uploadAttendance = async (req, res) => {
     })
 };
 
-=======
 const User = require("../models/userModel");
->>>>>>> 6dce89b783e82896b4c500f0a091826fb9438d96
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -122,9 +119,4 @@ exports.markAttendance = async (req, res) => {
       });
     }
   }
-<<<<<<< HEAD
 };
-
-=======
-};
->>>>>>> 6dce89b783e82896b4c500f0a091826fb9438d96
