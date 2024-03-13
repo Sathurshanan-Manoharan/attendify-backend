@@ -6,7 +6,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
-
+/*
 // Define routes
 app.post('/upload', upload.single('file'), handleFileUpload);
 
@@ -43,15 +43,45 @@ function handleFileUpload(req, res) {
         });
 }
 
+
 // Function to process CSV data
-async function handleCSVData(csvData) {
+async function handleCSVData(csvData, metadata) {
     for (const row of csvData) {
-        const { CourseName, TutorialGroup, Level } = row;
+        const { day, startTime, endTime,moduleName,moduleCode,Venue,instructor } = row;
         try {
             // Insert the timetable information into the database
-            await insertTimetableData(CourseName, TutorialGroup, Level);
+            await insertTimetableData( day, startTime, endTime,moduleName,moduleCode,Venue,instructor);
         } catch (error) {
             console.error('Error saving timetable entry:', error);
+        }
+    }
+}
+
+async function handleCSVData(csvData) {
+    for (const row of csvData) {
+        const { day, startTime, endTime, moduleName, moduleCode, Venue, instructor } = row;
+
+        // Perform any additional processing or validation here
+        
+        try {
+            // Save the extracted data to your database or perform other operations
+            // For example, you can create a new document in your MongoDB collection
+            const newTimeSlot = new TimeSlot({
+                startTime: startTime,
+                endTime: endTime,
+                module: moduleName,
+                moduleCode: moduleCode,
+                venue: Venue,
+                lecturer: instructor,
+                // You can add more fields as per your schema
+            });
+
+            const day = 
+
+            // Save the new time slot to the database
+            await newTimeSlot.save();
+        } catch (error) {
+            console.error('Error saving time slot:', error);
         }
     }
 }
@@ -111,8 +141,4 @@ const readTimetable = async (req, res) => {
 // Export functions
 module.exports = { createTimeTable, readTimetable };
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+*/

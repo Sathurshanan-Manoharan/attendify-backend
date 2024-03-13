@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 
 //sub models
 const timeSlot = {
+  
+
   startTime: {
     type: String,
     required: true,
@@ -65,4 +67,4 @@ const timeTableSchema = new mongoose.Schema({
 
 const timeTableModel = mongoose.model("timetable", timeTableSchema);
 
-module.exports = { timeTableModel };
+module.exports =  timeTableModel ;
