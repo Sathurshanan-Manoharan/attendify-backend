@@ -1,144 +1,101 @@
-const { timeTableModel } = require('../models/timeTableModel');
 const multer = require('multer');
-const upload = multer({ dest: "/upload" }); // Need to enter destination folder for uploaded file
-const csvParser = require('csv-parser');
 const fs = require('fs');
-const mongoose = require('mongoose');
-const express = require('express');
-const app = express();
-/*
-// Define routes
-app.post('/upload', upload.single('file'), handleFileUpload);
+const csvParser = require('csv-parser');
+const Timetable = require('./models/timeTableModel.js');
+const upload = multer({ dest: 'timetableupload' });
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:5173//api/v1/attendance', { useNewUrlParser: true, useUnifiedTopology: true });
-
-// Define mongoose schema for timetable
-const timetableSchema = new timeTableModel({
-    courseName: String,
-    tutorialGroup: String,
-    day: String,
+exports.uploadTimetable = async (req, res) => {
+    upload.single('csvFile')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json({ error: 'Internal Server Error' });
+        } else if (err) {
+            return res.status(400).json({ error: 'Bad Request' });
+        }
     
-});
-
-// Define mongoose model
-const Timetable = mongoose.model('Timetable', timetableSchema);
-
-// Function to handle file upload
-function handleFileUpload(req, res) {
-    const csvData = [];
-    fs.createReadStream(req.file.path)
-        .pipe(csvParser())
-        .on('data', (row) => {
-            csvData.push(row);
-        })
-        .on('end', async () => {
-            try {
-                // Process the CSV data and insert into the database
-                await handleCSVData(csvData);
-                res.json({ message: 'CSV file uploaded and processed successfully' });
-            } catch (error) {
-                res.status(500).json({ error: 'Internal Server Error' });
-            }
-        });
-}
-
-
-// Function to process CSV data
-async function handleCSVData(csvData, metadata) {
-    for (const row of csvData) {
-        const { day, startTime, endTime,moduleName,moduleCode,Venue,instructor } = row;
-        try {
-            // Insert the timetable information into the database
-            await insertTimetableData( day, startTime, endTime,moduleName,moduleCode,Venue,instructor);
-        } catch (error) {
-            console.error('Error saving timetable entry:', error);
+        if (!req.file) {
+            return res.status(400).json({ error: 'No File Uploaded' });
         }
-    }
-}
+    
+        const csvData = [];
+        let metadata = {}; // Initialize metadata object
+    
+        const stream = fs.createReadStream(req.file.path)
+            .pipe(csvParser())
+            .on('data', (row, index) => {
+                if (index === 1) {
+                    // Extract metadata from the first row of the CSV file
+                    metadata = {
+                        courseType: row[3],
+                        tutorialGroup: row[2],
+                        level: row[2],
+                        // Add more metadata keys as needed
+                    };
+                    
+                    console.log('Metadata:', metadata);
+                    console.log('Row:', row); // Log the entire row object
+                } else {
+                    // Process each row of the CSV file
+                    csvData.push(row);
+                }
+            })
+            .on('end', async () => {
+               
+                // Process the CSV data and save to the database
+                try {
+                   
+                    await processCSVData(csvData, metadata); // Pass metadata to processCSVData
+                    res.json({ message: 'CSV data processed and saved successfully' });
+                    console.log('CSV file processed successfully'); // Log success message
 
-async function handleCSVData(csvData) {
-    for (const row of csvData) {
-        const { day, startTime, endTime, moduleName, moduleCode, Venue, instructor } = row;
-
-        // Perform any additional processing or validation here
-        
-        try {
-            // Save the extracted data to your database or perform other operations
-            // For example, you can create a new document in your MongoDB collection
-            const newTimeSlot = new TimeSlot({
-                startTime: startTime,
-                endTime: endTime,
-                module: moduleName,
-                moduleCode: moduleCode,
-                venue: Venue,
-                lecturer: instructor,
-                // You can add more fields as per your schema
+                    fs.unlink(req.file.path, (err) => {
+                        if (err) {
+                            console.error('Error deleting CSV file:', err);git
+                        } else {
+                            console.log('CSV file deleted successfully');
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.error('Error processing CSV data:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                }
             });
+    });
+};
 
-            const day = 
+async function processCSVData(csvData, metadata) {
+    
+    const { tutorialGroup, level, courseType } = metadata;
 
-            // Save the new time slot to the database
-            await newTimeSlot.save();
+    for (const row of csvData) {
+        const {day, startTime, endTime, moduleName, moduleCode, venue, instructor } = row;
+
+        // Create new time table entry
+        const newTimeTableEntry = new Timetable({
+            timetable_id: moduleName+courseType, // Example ID
+            level_name: "level", // Example level name
+            tutorial_groups: [{
+                group_name: "tutorialGroup", // Example group name
+                days: [{
+                    day: startTime, // Example day
+                    sessions: [{
+                        start_time: startTime, // Example start time
+                        end_time: endTime, // Example end time
+                        lecture_title: moduleName, // Example lecture title
+                        instructor: instructor, // Example instructor
+                        venue: venue, // Example venue
+                    }]
+                }]
+            }]
+        });
+        
+
+        try {
+            await newTimeTableEntry.validate();
+            await newTimeTableEntry.save();
         } catch (error) {
-            console.error('Error saving time slot:', error);
+            console.error('Error saving time table entry:', error);
+            throw error; // Rethrow the error for proper error handling
         }
     }
 }
-
-// Function to insert timetable data into the database
-async function insertTimetableData(courseName, tutorialGroup, level,csvData) {
-    const timetableEntry = new Timetable({
-        courseName: courseName,
-        tutorialGroup: tutorialGroup,
-        level: level,
-        csvData : csvData
-    });
-
-    await timetableEntry.save();
-    console.log('Timetable entry saved successfully:', timetableEntry);
-}
-
-// Function to create a new timetable entry
-const createTimeTable = async (req, res) => {
-    try {
-        const { tutorialGroup, day, sessions } = req.body;
-        const newTimeTable = new timeTableModel({
-            tutorialGroup: tutorialGroup,
-            day: day,
-            sessions: sessions,
-        });
-        await newTimeTable.save();
-        return res.status(201).json({
-            data: newTimeTable
-        });
-    } catch (e) {
-        return res.status(400).json({
-            message: e
-        });
-    }
-};
-
-// Function to read timetable data
-const readTimetable = async (req, res) => {
-    try {
-        const timetableData = await timeTableModel.find();
-        res.status(201).json({
-            status: "success",
-            results: timetableData.length,
-            data: {
-                timetable: timetableData,
-            },
-        });
-    } catch (error) {
-        res.status(400).json({
-            status: "error",
-            message: error.message,
-        });
-    }
-};
-
-// Export functions
-module.exports = { createTimeTable, readTimetable };
-
-*/
