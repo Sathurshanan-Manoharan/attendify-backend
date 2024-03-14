@@ -13,4 +13,7 @@ router.route("/:id")
   .put(timeTableController.updateTimetable)
   .delete(timeTableController.deleteTimetable);
 
+
+router.route("/uploadtimetable").post(timeTableController.uploadTimetable);
+
 module.exports = router;
