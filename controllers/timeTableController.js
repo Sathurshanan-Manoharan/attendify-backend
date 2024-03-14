@@ -29,34 +29,29 @@ exports.uploadTimetable = async (req, res) => {
     })
 };
 
-exports.createTimeTable = async(req,res)=>{
-    try{
-        
-        const{tutorialGroup,day,sessions}=req.body
-        const newTimeTable=new timeTableModel({
-            tutorialGroup:tutorialGroup,
-            day:day,
-            sessions:sessions,
-        })
+exports.createTimeTable = async (req, res) => {
+    try {
+        const { tutorialGroup, day, sessions } = req.body;
+        const newTimeTable = new TimeTableModel({
+            tutorialGroup: tutorialGroup,
+            day: day,
+            sessions: sessions,
+        });
         await newTimeTable.save();
         return res.status(201).json({
-            data:newTimeTable
-        })
-
-    }catch(e){
+            data: newTimeTable
+        });
+    } catch (e) {
         return res.status(400).json({
-            message:e
-        })
+            message: e
+        });
     }
 };
 
-
 exports.readTimetable = async (req, res) => {
     try {
-       
-        const timetableData = await timeTableModel.find();
-
-        res.status(201).json({
+        const timetableData = await TimeTableModel.find();
+        res.status(200).json({
             status: "success",
             results: timetableData.length,
             data: {
@@ -71,24 +66,20 @@ exports.readTimetable = async (req, res) => {
     }
 };
 
-
-exports.updateTimetable = async(req, res) => {
+exports.updateTimetable = async (req, res) => {
     try {
-        
-        const { id }  = req.params;
-        const updatedTimetable  = await timeTableModel.findByIdAndUpdate(
+        const { id } = req.params;
+        const updatedTimetable = await TimeTableModel.findByIdAndUpdate(
             id,
             req.body,
-            { new: true} //Return updated version
-        )
-
+            { new: true }
+        );
         if (!updatedTimetable) {
             return res.status(404).json({
                 status: "error",
                 message: "Timetable not found",
             });
         }
-
         res.status(200).json({
             status: "success",
             data: {
@@ -99,26 +90,24 @@ exports.updateTimetable = async(req, res) => {
         res.status(400).json({
             status: "error",
             message: error.message,
-        })
+        });
     }
 };
 
 exports.deleteTimetable = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
-        const deletedTimetable = await timeTableModel.findByIdAndDelete(id);
+        const deletedTimetable = await TimeTableModel.findByIdAndDelete(id);
         if (!deletedTimetable) {
             return res.status(404).json({
                 status: "error",
                 message: "Timetable not found",
             });
         }
-
         res.status(200).json({
             status: "success",
             message: "Timetable deleted successfully",
         });
-
     } catch (error) {
         res.status(400).json({
             status: "error",
