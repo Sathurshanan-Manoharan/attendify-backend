@@ -14,7 +14,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(morgan("dev"));
-
+app.use(cors({ credentials: true, origin: true }));
 
 app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/timetable', timetableRouter);

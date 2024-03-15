@@ -11,7 +11,6 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose.connect(DB).then(() => console.log("DB connection successful!"));
-
 // READ JSON FILE
 const users = JSON.parse(
   fs.readFileSync(`${__dirname}/users.json`, "utf-8")
