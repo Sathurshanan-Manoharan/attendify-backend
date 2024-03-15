@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require("morgan");
 const attendanceRouter = require('./routes/attendanceRoutes');
 const timetableRouter = require('./routes/timeTableRoutes');
+const userRouter = require('./routes/userRoutes');
 const cors = require('cors');
 const port = 5173;
 
@@ -14,5 +15,6 @@ app.use(cors({
 
 app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/timetable', timetableRouter);
+app.use('/api/v1/user', userRouter);
 
 module.exports = app;
