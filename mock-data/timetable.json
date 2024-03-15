@@ -1,85 +1,83 @@
 {
-  "tuturialGroups": [
+  "level_name": "4",
+  "timetable_id":"123",
+  "tutorial_groups": [
     {
-      "groupName": "Group A",
+      "group_name": "A",
       "days": [
         {
-          "dayName": "Monday",
+          "day": "Monday",
           "sessions": [
             {
-              "startTime": "08:30",
-              "endTime": "10:30",
+              "start_time": "08:30",
+              "end_time": "10:30",
               "module": "Programming 101",
-              "lecturer": "Prof. Smith",
+              "instructor": "Prof. Smith",
               "course": "Computer Science",
               "venue": "Lecture Hall 1",
-              "level": "L5",
-              "title": "Introduction to Programming"
+              "lecture_title": "Introduction to Programming"
             },
             {
-              "startTime": "10:30",
-              "endTime": "12:30",
+              "start_time": "10:30",
+              "end_time": "12:30",
               "module": "Mathematics",
-              "lecturer": "Dr. Jones",
+              "instructor": "Dr. Jones",
               "course": "Software Engineering",
               "venue": "Lecture Hall 2",
-              "level": "L4",
-              "title": "Limits and Derivatives"
+              "lecture_title": "Limits and Derivatives"
             }
           ]
         },
         {
-          "dayName": "Wednesday",
+          "day": "Wednesday",
           "sessions": [
             {
-              "startTime": "13:30",
-              "endTime": "15:30",
+              "start_time": "13:30",
+              "end_time": "15:30",
               "module": "Data Structures",
-              "lecturer": "Mr. Lee",
+              "instructor": "Mr. Lee",
               "course": "Computer Science",
               "venue": "Lab 3",
-              "level": "L5",
-              "title": "Arrays and Linked Lists"
+              "lecture_title": "Arrays and Linked Lists"
             }
           ]
         }
       ]
     },
     {
-      "groupName": "Group B",
+      "group_name": "B",
       "days": [
         {
-          "dayName": "Tuesday",
+          "day": "Tuesday",
           "sessions": [
             {
-              "startTime": "10:30",
-              "endTime": "12:30",
+              "start_time": "10:30",
+              "end_time": "12:30",
               "module": "Object oriented programming",
-              "lecturer": "Dr. Brown",
+              "instructor": "Dr. Brown",
               "course": "Software Engineering",
               "venue": "Lecture Hall 3",
-              "level": "L5",
-              "title": "Classes and objects"
+              "lecture_title": "Classes and objects"
             }
           ]
         },
         {
-          "dayName": "Thursday",
+          "day": "Thursday",
           "sessions": [
             {
-              "startTime": "15:30",
-              "endTime": "17:30",
+              "start_time": "15:30",
+              "end_time": "17:30",
               "module": "Web Development",
-              "lecturer": "Ms. Garcia",
+              "instructor": "Ms. Garcia",
               "course": "Computer Science",
               "venue": "Lab 1",
-              "level": "L4",
-              "title": "Introduction to HTML and CSS"
+              "lecture_title": "Introduction to HTML and CSS"
             }
           ]
         }
       ]
     }
-  ],
-  "name": "Attendify"
+  ]
+
+
 }
