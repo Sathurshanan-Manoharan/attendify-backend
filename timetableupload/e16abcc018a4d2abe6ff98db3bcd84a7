@@ -1,0 +1,21 @@
+﻿date,day,startTime,endTime,moduleName,moduleCode,venue,instructor
+25-Mar-24,Monday,3.30PM,5.30PM,AI,5COSC028C,SP-4LA,Samantha Davis
+25-Mar-24,Monday,1.30PM,3.30PM,CN,5COSC027C,SP-3LA,Michael Browne
+25-Mar-24,Monday,10.30AM,12.30PM,DBMS,5COSC023C,SP-2LA,Emily Johnson
+25-Mar-24,Monday,8.30AM,10.30AM,SDEV,5COSC061C,SP-1LA,John Smith
+26-Mar-24,Tuesday,1.30PM,3.30PM,DB,5COSC022C,SP-3LB,Matthew Thompson
+26-Mar-24,Tuesday,8.30AM,10.30AM,ML,5COSC037C,SP-1LB,Christopher Miller
+26-Mar-24,Tuesday,10.30AM,12.30PM,OS,5COSC066C,SP-2LB,Amanda Wilson
+26-Mar-24,Tuesday,3.30PM,5.30PM,SE,5COSC070C,SP-4LB,Ethan Martinez
+27-Mar-24,Wednesday,1.30PM,3.30PM,AI,5COSC028C,SP-3LC,"Lauren Scott, Benjamin Adams"
+27-Mar-24,Wednesday,10.30AM,12.30PM,CN,5COSC027C,SP-2LC,Ryan Murphy
+27-Mar-24,Wednesday,8.30AM,10.30AM,DSA,5COSC040C,SP-1LC,Jessica Garcia
+27-Mar-24,Wednesday,3.30PM,5.30PM,ML,5COSC037C,SP-4LC,Kimberly Turne
+28-Mar-24,Thursday,8.30AM,10.30AM,ALGO,5COSC021C,SP-4LA,NUW
+28-Mar-24,Thursday,3.30PM,5.30PM,DB,5COSC022C,SP-7LA,Matthew Thompson
+28-Mar-24,Thursday,1.30PM,3.30PM,ML,5COSC037C,SP-6LA,Ethan Martinez
+28-Mar-24,Thursday,10.30AM,12.30AM,SDGP,5COSC045C,SP-5LA,Jessica Garcia
+29-Mar-24,Friday,1.30PM,3.30PM,ALGO,5COSC021C,SP-6LA,Christopher Miller
+29-Mar-24,Friday,10.30AM,12.30AM,ML,5COSC037C,SP-5LA,Samantha Davis
+29-Mar-24,Friday,8.30AM,10.30AM,OS,5COSC066C,SP-4LA,Michael Browne
+29-Mar-24,Friday,3.30PM,5.30PM,SDGP,5COSC045C,SP-7LA,Amanda Wilson
