@@ -6,14 +6,19 @@ const sessionSchema = new mongoose.Schema({
   lecture_title: { type: String, required: true },
   instructor: { type: String, required: true },
   venue: { type: String, required: true },
+  course: { type: String, required: true },
+  module: { type: String, required: true },
 });
 
 const daySchema = new mongoose.Schema({
+
   day: { type: String, required: true },
   sessions: [sessionSchema],
+
 });
 
 const tutorialGroupSchema = new mongoose.Schema({
+  
   group_name: { type: String, required: true },
   days: [daySchema],
 });
@@ -25,5 +30,4 @@ const timetableSchema = new mongoose.Schema({
 });
 
 const Timetable = mongoose.model('Timetable', timetableSchema);
-
 module.exports = Timetable;

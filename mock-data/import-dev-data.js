@@ -34,9 +34,25 @@ const deleteData = async () => {
     console.log(err);
   }
 };
+const createTable = async()=>{
 
+  try{
+    
+    console.log(time_table)
+    await timeTableModel.create(time_table)
+    console.log("timetable created")
+
+}catch(e){
+
+  console.log(e.message)
+}
+
+}
 if (process.argv[2] === "--import") {
   importData();
 } else if (process.argv[2] === "--delete") {
   deleteData();
+}
+else if(process.argv[2]==="--create-table"){
+  createTable();
 }
