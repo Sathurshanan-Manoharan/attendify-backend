@@ -1,9 +1,9 @@
 const express = require("express");
 const timeTableController = require("../controllers/timeTableController");
-const UploadTimetable = require("../UploadTimetable"); // Correct the case here
+const UploadTimetable = require("../controllers/onlineTimetableController"); // Correct the case here
 const router = express.Router();
 
-router.route("/uploadtimetable").post(UploadTimetable.uploadTimetable); // Use the correct case for UploadTimetable
+router.route("../controllers/onlineTimetableController").post(UploadTimetable.uploadTimetable); // Use the correct case for UploadTimetable
 
 router.route("/")
   .post(timeTableController.createTimeTable)
@@ -14,6 +14,8 @@ router.route("/:id")
   .delete(timeTableController.deleteTimetable);
 
 
-router.route("/uploadtimetable").post(timeTableController.uploadTimetable);
+router.route("../controllers/onlineTimetableController").post(UploadTimetable.uploadTimetable);
+
+router.route("/uploadtimetable").post(UploadTimetable.uploadTimetable);
 
 module.exports = router;
