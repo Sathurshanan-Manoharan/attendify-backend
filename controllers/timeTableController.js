@@ -18,7 +18,7 @@ exports.uploadTimetable = async (req, res) => {
         return res.status(400).json({ error: 'No File Uploaded' });
       }
   
-      //Test if received
+      
       console.log('File Received', req.file);
       
       
