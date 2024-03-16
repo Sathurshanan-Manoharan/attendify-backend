@@ -2,6 +2,7 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const User = require("../models/userModel");
+const timeTableModel = require("../models/timeTableModel");
 
 dotenv.config({ path: "./config.env" });
 
