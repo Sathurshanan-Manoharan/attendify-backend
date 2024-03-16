@@ -79,7 +79,6 @@ exports.markAttendance = async (req, res) => {
     const currentTime = moment().tz('Asia/Colombo');
 
     const user = await User.findOne({ uid: req.params.id });
-    console.log(user);
 
     const attendance = await Attendance.findOneAndUpdate(
       {
