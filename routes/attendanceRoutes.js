@@ -5,7 +5,7 @@ const router = express.Router();
 
 router
   .route("/")
-  //.get(attendanceController.getAllAttendance)
+  .get(attendanceController.getAllAttendance)
   .post(attendanceController.createAttendance)
   
 
