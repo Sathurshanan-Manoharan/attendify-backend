@@ -34,10 +34,10 @@ exports.processCSV = (req, res) => {
                 const line = lines[i].trim();
 
                 //Set the delimitter to a semi colon
-                const [Name, FirstJoin, LastLeave, InMeetingDuration, Email, ParticipantID, Role] = line.split(';');
+                const [Name, FirstJoinDate, FirstJoinTime, LastLeaveDate, LastLeaveTime, InMeetingDuration, Email, ParticipantID, Role] = line.split(',');
 
                 //Create an object representing the participant and push it to attendees array
-                attendees.push({ Name, FirstJoin, LastLeave, InMeetingDuration, Email, ParticipantID, Role });
+                attendees.push({ Name, FirstJoinDate, FirstJoinTime, LastLeaveDate, LastLeaveTime, InMeetingDuration, Email, ParticipantID, Role });
             }
 
             console.log('CSV file successfully processed');
@@ -49,6 +49,8 @@ exports.processCSV = (req, res) => {
                 console.log('No organiser found in the attendees list');
             }
 
+            console.log(attendees);
+
             const filteredAttendees = attendees.filter(attendee => attendee.Role === 'Attendee');
 
             //Retrieve emails of the filtered attendees
@@ -59,6 +61,9 @@ exports.processCSV = (req, res) => {
 
             //Extract the first 8 characters from each email
             const truncatedEmails = filteredEmails.map(email => email.substring(0, 8));
+
+            const emailPattern = /^w\d{7}$/;
+            const validEmails = truncatedEmails.filter(email => emailPattern.test(email));
 
             Attendance.findOne({ lecture_title: "Introduction to Programming" })
             .then(attendance => {
@@ -83,7 +88,6 @@ exports.processCSV = (req, res) => {
             .catch(error => {
                 console.error('Error updating attendance record:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
-                console.log("here");
             });
         
          });
