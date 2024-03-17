@@ -17,7 +17,13 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
     enum: ["held", "canceled", "pending"],
   },
-  students_present: { type: [String], default: [] },
+  students_present: { 
+    type: [{
+      user_id: String,
+      check_in_time: Date
+    }],
+    default: [] 
+  }
 });
 
 attendanceSchema.pre("save", function (next) {
