@@ -86,7 +86,7 @@ exports.markAttendance = async (req, res) => {
         start_time: { $lte: currentTime },
         end_time: { $gte: currentTime },
       },
-      { $addToSet: { students_present: user.iitId } },
+      { $addToSet: { students_present: { user_id: user.iitId, check_in_time: currentTime} } },
       { new: true }
     );
 

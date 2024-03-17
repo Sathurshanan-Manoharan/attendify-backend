@@ -8,7 +8,7 @@ router
   .get(attendanceController.getAllAttendance)
   .post(attendanceController.createAttendance)
   
-
+//Takes user UID
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
 router.route("/upload").post(attendanceController.uploadAttendance);
 //Processes csv and updates database
