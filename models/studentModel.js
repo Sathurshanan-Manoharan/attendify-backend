@@ -1,7 +1,20 @@
 const mongoose = require("mongoose");
-const UserModel = require("./userModel");
-
 const studentSchema = new mongoose.Schema({
+
+    firstName: {
+        type: String,
+        required: [true, "A student must have a first name"],
+      },
+    
+      lastName: {
+        type: String,
+        required: [true, "A student must have a last name"],
+      },
+    
+      uid: {
+        type: String,
+        required: [true, "A student must have a uid"],
+      },
 
     studentID: {
         type: String,
@@ -32,6 +45,5 @@ const studentSchema = new mongoose.Schema({
   
 });
 
-const StudentModel = UserModel.discriminator("Student", studentSchema);
-
+const StudentModel = mongoose.model("Student", studentSchema);
 module.exports = StudentModel;
