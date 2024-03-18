@@ -2,6 +2,7 @@ const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
 const multer = require('multer');
 const User = require("../models/userModel");
+const UserStudent = require("../models/studentModel");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -80,7 +81,7 @@ exports.markAttendance = async (req, res) => {
     const currentTime = moment().tz('Asia/Colombo');
     const currentTimeString = moment().tz('Asis/Colombo').format('hh:mm A');
 
-    const user = await User.findOne({ uid: req.params.id });
+    const user = await UserStudent.findOne({ uid: req.params.id });
     console.log(user);
 
     const attendance = await Attendance.findOneAndUpdate(
@@ -90,7 +91,7 @@ exports.markAttendance = async (req, res) => {
         end_time: { $gte: currentTime },
       },
       
-      { $addToSet: { students_present: { user_id: user.firstName, check_in_time: currentTimeString} } },
+      { $addToSet: { students_present: { user_id: user.studentID, check_in_time: currentTimeString} } },
       { new: true }
     );
 
