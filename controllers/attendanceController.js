@@ -1,7 +1,7 @@
 const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
 const multer = require('multer');
-const User = require("../models/userModel");
+//Refers to Student Model
 const UserStudent = require("../models/studentModel");
 
 const storage = multer.diskStorage({
@@ -78,19 +78,22 @@ exports.createAttendance = async (req, res) => {
 
 exports.markAttendance = async (req, res) => {
   try {
+    //Used to compare with session times
     const currentTime = moment().tz('Asia/Colombo');
-    const currentTimeString = moment().tz('Asis/Colombo').format('hh:mm A');
+    //Used to store the time of user 'Check-in'
+    const currentTimeString = moment().tz('Asia/Colombo').format('hh:mm A');
 
     const user = await UserStudent.findOne({ uid: req.params.id });
-    console.log(user);
 
     const attendance = await Attendance.findOneAndUpdate(
       {
         venue: req.body.venue,
         start_time: { $lte: currentTime },
         end_time: { $gte: currentTime },
+        //Check if element with user_is is already present in the array
+        students_present: { $not: { $elemMatch: { user_id: user.studentID } } }
       },
-      
+      //Appends an object comprised of StudentID and Check-in Time to Array
       { $addToSet: { students_present: { user_id: user.studentID, check_in_time: currentTimeString} } },
       { new: true }
     );
@@ -98,11 +101,12 @@ exports.markAttendance = async (req, res) => {
     
 
     if (!attendance) {
+      //Is also displayed if the same user tries to check-in twice
       res.status(404).json({
         status: 'fail',
         message: 'No attendance found',
       });
-      return; // Stop further execution
+      return; //Stop further execution
     }
 
     res.status(200).json({
