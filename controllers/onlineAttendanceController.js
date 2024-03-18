@@ -33,7 +33,7 @@ exports.processCSV = (req, res) => {
             for (let i = 11; i < lines.length; i++) {
                 const line = lines[i].trim();
 
-                //Set the delimitter to a semi colon
+                //Set the delimitter to a comma
                 const [Name, FirstJoinDate, FirstJoinTime, LastLeaveDate, LastLeaveTime, InMeetingDuration, Email, ParticipantID, Role] = line.split(',');
 
                 //Create an object representing the participant and push it to attendees array
@@ -49,8 +49,6 @@ exports.processCSV = (req, res) => {
                 console.log('No organiser found in the attendees list');
             }
 
-            console.log(attendees);
-
             const filteredAttendees = attendees.filter(attendee => attendee.Role === 'Attendee');
 
             //Retrieve emails of the filtered attendees
@@ -59,21 +57,44 @@ exports.processCSV = (req, res) => {
             //Filter the Non-Westminster emails out
             const filteredEmails = attendeeEmails.filter(email => email.includes('@westminster.ac.uk'));
 
-            //Extract the first 8 characters from each email
-            const truncatedEmails = filteredEmails.map(email => email.substring(0, 8));
+            const emailPattern = /^.*w\d{7}@westminster\.ac\.uk.*$/;
+            
+            //Filters out emails that do not fit the pattern
+            const validEmails = filteredEmails.filter(email => emailPattern.test(email));
+            
+            const studentsPresent = validEmails.map(email => {
+                const attendee = filteredAttendees.find(attendee => attendee.Email === email);
+                if (attendee) {
+                    //Extract only the user ID from the email
+                    const userId = email.substring(0, 8);
+            
+                    //Format the check-in time
+                    let formattedCheckInTime = attendee.FirstJoinTime.replace(/ (\d{1,2}:\d{2}):\d{2} (AM|PM)/, '$1 $2');
 
-            const emailPattern = /^w\d{7}$/;
-            const validEmails = truncatedEmails.filter(email => emailPattern.test(email));
+                    //Remove trailing double quotation mark
+                    formattedCheckInTime = formattedCheckInTime.slice(0, -1);
+            
+                    return {
+                        user_id: userId,
+                        check_in_time: formattedCheckInTime
+                    };
+                } else {
+                    console.warn(`No attendee found with email: ${email}`);
+                    return null;
+                }
+            }).filter(Boolean);
 
-            Attendance.findOne({ lecture_title: "Introduction to Programming" })
+
+
+            Attendance.findOne({ lecture_title: "Introduction to Web" })
             .then(attendance => {
                 if (attendance) {
-                    //Updates the student array with the truncated emails
-                    attendance.students_present = truncatedEmails;
+                    //Updates the student array with the student objects
+                    attendance.students_present = studentsPresent;
                     //Start time and end time selection
                     attendance.time_range = {
-                        start_time: "Fri Mar 08 2024 20:30:00 GMT+0530 (India Standard Time)", // Example: Current time
-                        end_time: "Fri Mar 08 2024 22:30:00 GMT+0530 (India Standard Time)", // Example: Current time
+                        start_time: "Mon Mar 18 2024 21:00:00 GMT+0530 (India Standard Time)", 
+                        end_time: "Mon Mar 18 2024 23:50:00 GMT+0530 (India Standard Time)", 
                     };
                     //Save the updated document
                     return attendance.save();
