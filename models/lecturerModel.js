@@ -21,7 +21,7 @@ const lecturerSchema = new mongoose.Schema({
         required: [true, "A lecturer must have an lecturer ID"],
       },
 
-    email: {
+    iitemail: {
         type: String,
         required: [true, "A lecturer must have an email"],
       },
