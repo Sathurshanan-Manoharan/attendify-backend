@@ -1,6 +1,7 @@
 const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
 const multer = require('multer');
+const User = require("../models/userModel");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -36,7 +37,7 @@ exports.uploadAttendance = async (req, res) => {
     })
 };
 
-const User = require("../models/userModel");
+
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -77,6 +78,7 @@ exports.createAttendance = async (req, res) => {
 exports.markAttendance = async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Colombo');
+    const currentTimeString = moment().tz('Asis/Colombo').format('hh:mm A');
 
     const user = await User.findOne({ uid: req.params.id });
     console.log(user);
@@ -88,9 +90,11 @@ exports.markAttendance = async (req, res) => {
         end_time: { $gte: currentTime },
       },
       
-      { $addToSet: { students_present: { user_id: user.iitId, check_in_time: currentTime} } },
+      { $addToSet: { students_present: { user_id: user.firstName, check_in_time: currentTimeString} } },
       { new: true }
     );
+
+    
 
     if (!attendance) {
       res.status(404).json({
