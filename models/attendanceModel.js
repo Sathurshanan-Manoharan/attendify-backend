@@ -20,7 +20,7 @@ const attendanceSchema = new mongoose.Schema({
   students_present: { 
     type: [{
       user_id: String,
-      check_in_time: Date
+      check_in_time: String
     }],
     default: [] 
   }
