@@ -58,7 +58,7 @@ exports.processCSV = (req, res) => {
             const filteredEmails = attendeeEmails.filter(email => email.includes('@westminster.ac.uk'));
 
             const emailPattern = /^.*w\d{7}@westminster\.ac\.uk.*$/;
-            
+
             //Filters out emails that do not fit the pattern
             const validEmails = filteredEmails.filter(email => emailPattern.test(email));
             
@@ -104,6 +104,14 @@ exports.processCSV = (req, res) => {
             })
             .then(updatedAttendance => {
                 console.log('Attendance record updated successfully');
+                //Delete the CSV file after processing 
+                fs.unlink(csvFilePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting CSV file:', err);
+                    } else {
+                        console.log('CSV file deleted successfully')
+                    }
+                })
                 res.json({ message: 'Attendance record updated successfully' });
             })
             .catch(error => {
