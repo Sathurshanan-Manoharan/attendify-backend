@@ -8,6 +8,7 @@ router
   .get(attendanceController.getAllAttendance)
   .post(attendanceController.createAttendance)
   
+router.route("/createAttendance").post(attendanceController.createAttendanceFromTimetable);
 //Takes user UID
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
 router.route("/upload").post(attendanceController.uploadAttendance);
