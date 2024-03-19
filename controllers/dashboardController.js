@@ -4,34 +4,40 @@ const moment = require("moment");
 
 exports.getSessionDetails = async (req, res) => {
   try {
-    const requestedStartTime = new Date("2024-03-19T10:30:00"); // Convert the requested start time to Date object
-    const requestedEndTime = new Date("2024-03-19T12:30:00"); // Convert the requested end time to Date object
+    // For testing purposes
+    // const requestedStartTime = new Date("2024-03-19T10:30:00"); 
+    // const requestedEndTime = new Date("2024-03-19T12:30:00"); 
+
+    const currentTime = new Date();
 
     // Find a session that matches the requested start and end times and the lecturer ID
     const session = await Attendance.findOne({
-      start_time: requestedStartTime,
-      end_time: requestedEndTime,
-      "instructor.id": req.params.lecturerId // Assuming lecturerId is passed in the request params
+        start_time: { $lte: currentTime }, // Session start time should be less than or equal to the current time
+        end_time: { $gte: currentTime },   // Session end time should be greater than or equal to the current time
+        "instructor.id": req.params.lecturerId // Assuming lecturerId is passed in the request params
     });
 
     // If no session found, return empty data
     if (!session) {
-      return res.status(200).json({
-        status: "success",
-        message: "No session found for the requested lecturer at the specified time.",
-        data: null,
-      });
-    }
+        return res.status(200).json({
+          status: "success",
+          data: {
+            total_students_attended: 0,
+            expectedStudents: 0,
+            lateArrivals: 0,
+            onTime: 0,
+            absent: 0
+          }
+        });
+      }
 
     // Total number of students attended
     const totalStudentsAttended = session.students_present.length;
 
     // Calculate late arrivals and on time students
-
-    // Calculate late arrivals and on time students
     const lateArrivals = session.students_present.filter(student => {
         const checkInTime = moment(student.check_in_time, "hh:mm A").toDate(); // Convert check-in time string to Date object
-        const fifteenMinutesAfterStart = new Date(requestedStartTime);
+        const fifteenMinutesAfterStart = new Date(session.start_time);
         fifteenMinutesAfterStart.setMinutes(fifteenMinutesAfterStart.getMinutes() + 15);
         return checkInTime > fifteenMinutesAfterStart; // If check-in time is after 15 minutes past the session start time, it's a late arrival
     }).length;
@@ -50,7 +56,7 @@ exports.getSessionDetails = async (req, res) => {
     res.status(200).json({
       status: "success",
       data: {
-        // ...session.toObject(),
+        ...session.toObject(),
         total_students_attended: totalStudentsAttended,
         expectedStudents: expectedStudents,
         lateArrivals: lateArrivals,
@@ -66,48 +72,3 @@ exports.getSessionDetails = async (req, res) => {
     });
   }
 };
-
-
-
-// exports.getSessionDetails = async (req, res) => {
-//   try {
-//     const lecturerId = req.params.lecturerId;
-
-//     // Find all attendance records for sessions associated with the lecturer
-//     const sessions = await Attendance.find({ "instructor.id": lecturerId });
-
-//     // If no sessions found, return empty data
-//     if (!sessions || sessions.length === 0) {
-//       return res.status(200).json({
-//         status: "success",
-//         data: [],
-//       });
-//     }
-
-//     // Process the attendance records to extract required details
-//     const sessionDetails = sessions.map((session) => {
-//       return {
-//         date: session.date,
-//         start_time: session.start_time,
-//         end_time: session.end_time,
-//         students_attended: session.students_present.map((student) => {
-//           return {
-//             user_id: student.user_id,
-//             check_in_time: student.check_in_time,
-//           };
-//         }),
-//       };
-//     });
-
-//     // Send session details to frontend
-//     res.status(200).json({
-//       status: "success",
-//       data: sessionDetails,
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       status: "error",
-//       message: err.message,
-//     });
-//   }
-// };
