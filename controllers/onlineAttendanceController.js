@@ -33,11 +33,11 @@ exports.processCSV = (req, res) => {
             for (let i = 11; i < lines.length; i++) {
                 const line = lines[i].trim();
 
-                //Set the delimitter to a semi colon
-                const [Name, FirstJoin, LastLeave, InMeetingDuration, Email, ParticipantID, Role] = line.split(';');
+                //Set the delimitter to a comma
+                const [Name, FirstJoinDate, FirstJoinTime, LastLeaveDate, LastLeaveTime, InMeetingDuration, Email, ParticipantID, Role] = line.split(',');
 
                 //Create an object representing the participant and push it to attendees array
-                attendees.push({ Name, FirstJoin, LastLeave, InMeetingDuration, Email, ParticipantID, Role });
+                attendees.push({ Name, FirstJoinDate, FirstJoinTime, LastLeaveDate, LastLeaveTime, InMeetingDuration, Email, ParticipantID, Role });
             }
 
             console.log('CSV file successfully processed');
@@ -57,18 +57,44 @@ exports.processCSV = (req, res) => {
             //Filter the Non-Westminster emails out
             const filteredEmails = attendeeEmails.filter(email => email.includes('@westminster.ac.uk'));
 
-            //Extract the first 8 characters from each email
-            const truncatedEmails = filteredEmails.map(email => email.substring(0, 8));
+            const emailPattern = /^.*w\d{7}@westminster\.ac\.uk.*$/;
 
-            Attendance.findOne({ lecture_title: "Introduction to Programming" })
+            //Filters out emails that do not fit the pattern
+            const validEmails = filteredEmails.filter(email => emailPattern.test(email));
+            
+            const studentsPresent = validEmails.map(email => {
+                const attendee = filteredAttendees.find(attendee => attendee.Email === email);
+                if (attendee) {
+                    //Extract only the user ID from the email
+                    const userId = email.substring(0, 8);
+            
+                    //Format the check-in time
+                    let formattedCheckInTime = attendee.FirstJoinTime.replace(/ (\d{1,2}:\d{2}):\d{2} (AM|PM)/, '$1 $2');
+
+                    //Remove trailing double quotation mark
+                    formattedCheckInTime = formattedCheckInTime.slice(0, -1);
+            
+                    return {
+                        user_id: userId,
+                        check_in_time: formattedCheckInTime
+                    };
+                } else {
+                    console.warn(`No attendee found with email: ${email}`);
+                    return null;
+                }
+            }).filter(Boolean);
+
+
+
+            Attendance.findOne({ lecture_title: "Introduction to Web" })
             .then(attendance => {
                 if (attendance) {
-                    //Updates the student array with the truncated emails
-                    attendance.students_present = truncatedEmails;
+                    //Updates the student array with the student objects
+                    attendance.students_present = studentsPresent;
                     //Start time and end time selection
                     attendance.time_range = {
-                        start_time: "Fri Mar 08 2024 20:30:00 GMT+0530 (India Standard Time)", // Example: Current time
-                        end_time: "Fri Mar 08 2024 22:30:00 GMT+0530 (India Standard Time)", // Example: Current time
+                        start_time: "Mon Mar 18 2024 21:00:00 GMT+0530 (India Standard Time)", 
+                        end_time: "Mon Mar 18 2024 23:50:00 GMT+0530 (India Standard Time)", 
                     };
                     //Save the updated document
                     return attendance.save();
@@ -78,12 +104,19 @@ exports.processCSV = (req, res) => {
             })
             .then(updatedAttendance => {
                 console.log('Attendance record updated successfully');
+                //Delete the CSV file after processing 
+                fs.unlink(csvFilePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting CSV file:', err);
+                    } else {
+                        console.log('CSV file deleted successfully')
+                    }
+                })
                 res.json({ message: 'Attendance record updated successfully' });
             })
             .catch(error => {
                 console.error('Error updating attendance record:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
-                console.log("here");
             });
         
          });
