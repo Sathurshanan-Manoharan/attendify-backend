@@ -131,3 +131,28 @@ exports.markAttendance = async (req, res) => {
     }
   }
 };
+
+exports.getAttendance = async (req, res) => {
+  try {
+    // find attendance by id and populate the students_present array
+
+    const attendance = await Attendance.findById(req.params.id).populate('students_present.studentID');
+
+    //i want to get the students present array
+    const studentsPresent = attendance.students_present;
+    // now send the students present array to the client
+    res.status(200).json({
+      status: "success",
+      data: {
+        studentsPresent,
+      },
+    });
+
+    
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
+};

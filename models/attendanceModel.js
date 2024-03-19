@@ -17,29 +17,23 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
     enum: ["held", "canceled", "pending"],
   },
-  students_present: { 
-    type: [{
-      user_id: String,
-      check_in_time: String
-    }],
-    default: [] 
-  }
+  students_present: {
+    type: [
+      {
+        studentID: { type: String, ref: "Student" },
+        check_in_time: String,
+      },
+    ],
+    default: [],
+  },
 });
 
 attendanceSchema.pre("save", function (next) {
   const colomboTimezone = "Asia/Colombo";
 
   // Assuming 'startTime' and 'endTime' are properties in your schema
-  const startTime = moment.tz(
-    this.start_time,
-    "hh:mm A",
-    colomboTimezone
-  );
-  const endTime = moment.tz(
-    this.end_time,
-    "hh:mm A",
-    colomboTimezone
-  );
+  const startTime = moment.tz(this.start_time, "hh:mm A", colomboTimezone);
+  const endTime = moment.tz(this.end_time, "hh:mm A", colomboTimezone);
 
   this.start_time = startTime.toDate();
   this.end_time = endTime.toDate();
