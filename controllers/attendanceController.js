@@ -1,8 +1,8 @@
 const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
-const User = require("../models/userModel");
 const Timetable = require("../models/timeTableModel");
-const multer = require("multer");
+const UserStudent = require("../models/studentModel");
+const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -36,6 +36,7 @@ exports.uploadAttendance = async (req, res) => {
     res.json({ message: "File uploaded successfully" });
   });
 };
+
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -74,30 +75,33 @@ exports.createAttendance = async (req, res) => {
 
 exports.markAttendance = async (req, res) => {
   try {
-    const currentTime = moment().tz("Asia/Colombo");
+    const currentTime = moment().tz('Asia/Colombo');
+    const currentTimeString = moment().tz('Asia/Colombo').format('hh:mm A');
 
-    const user = await User.findOne({ uid: req.params.id });
+    const user = await UserStudent.findOne({ uid: req.params.id });
 
     const attendance = await Attendance.findOneAndUpdate(
       {
         venue: req.body.venue,
         start_time: { $lte: currentTime },
         end_time: { $gte: currentTime },
+        //Check if element with user_is is already present in the array
+        students_present: { $not: { $elemMatch: { user_id: user.studentID } } }
       },
-      {
-        $addToSet: {
-          students_present: { user_id: user.iitId, check_in_time: currentTime },
-        },
-      },
+      //Appends an object comprised of StudentID and Check-in Time to Array
+      { $addToSet: { students_present: { user_id: user.studentID, check_in_time: currentTimeString} } },
       { new: true }
     );
 
+    
+
     if (!attendance) {
+      //Is also displayed if the same user tries to check-in twice
       res.status(404).json({
         status: "fail",
         message: "No attendance found",
       });
-      return; // Stop further execution
+      return; //Stop further execution
     }
 
     res.status(200).json({

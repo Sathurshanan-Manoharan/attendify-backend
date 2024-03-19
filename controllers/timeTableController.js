@@ -1,4 +1,4 @@
-const timeTableModel = require('../models/timeTableModel') ;
+const Timetable = require('../models/timeTableModel.js');
 const multer = require('multer');
 
 const upload = multer({ dest: 'timetableupload'});
@@ -32,7 +32,7 @@ exports.uploadTimetable = async (req, res) => {
 exports.createTimeTable = async (req, res) => {
     try {
         const { tutorialGroup, day, sessions } = req.body;
-        const newTimeTable = new TimeTableModel({
+        const newTimeTable = new Timetable({
             tutorialGroup: tutorialGroup,
             day: day,
             sessions: sessions,
@@ -50,7 +50,7 @@ exports.createTimeTable = async (req, res) => {
 
 exports.readTimetable = async (req, res) => {
     try {
-        const timetableData = await TimeTableModel.find();
+        const timetableData = await Timetable.find();
         res.status(200).json({
             status: "success",
             results: timetableData.length,
@@ -69,7 +69,7 @@ exports.readTimetable = async (req, res) => {
 exports.updateTimetable = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedTimetable = await TimeTableModel.findByIdAndUpdate(
+        const updatedTimetable = await Timetable.findByIdAndUpdate(
             id,
             req.body,
             { new: true }
@@ -97,7 +97,7 @@ exports.updateTimetable = async (req, res) => {
 exports.deleteTimetable = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedTimetable = await TimeTableModel.findByIdAndDelete(id);
+        const deletedTimetable = await Timetable.findByIdAndDelete(id);
         if (!deletedTimetable) {
             return res.status(404).json({
                 status: "error",
@@ -115,3 +115,4 @@ exports.deleteTimetable = async (req, res) => {
         });
     }
 };
+
