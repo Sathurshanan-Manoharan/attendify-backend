@@ -3,7 +3,7 @@ const multer = require('multer');
 
 const upload = multer({ dest: 'timetableupload' });
 
-exports.uploadTimetable = async (req, res) => {
+exports.uploadTimetableTwo = async (req, res) => {
     upload.single('csvFile')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -21,68 +21,37 @@ exports.uploadTimetable = async (req, res) => {
     });
 };
 
-exports.createTimeTable = async (req, res) => {
+exports.createTimetable = async (req, res) => {
     try {
-        const { tutorialGroup, day, sessions } = req.body;
-        const newTimeTable = new Lecturertimetable({
-            tutorialGroup: tutorialGroup,
-            day: day,
-            sessions: sessions,
-        });
-        await newTimeTable.save();
-        return res.status(201).json({
-            data: newTimeTable
-        });
-    } catch (e) {
-        return res.status(400).json({
-            message: e
-        });
+        const { days } = req.body; 
+        const newTimetable = new Lecturertimetable({ days });
+        const savedTimetable = await newTimetable.save();
+        res.status(201).json({ message: 'Timetable created successfully(CRUD)', data: savedTimetable });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
-exports.readTimetable = async (req, res) => {
+exports.getAllTimetables = async (req, res) => {
     try {
-        const timetableData = await Lecturertimetable.find();
-        res.status(200).json({
-            status: "success",
-            results: timetableData.length,
-            data: {
-                timetable: timetableData,
-            },
-        });
+        const timetables = await Lecturertimetable.find();
+        res.status(200).json({ data: timetables });
     } catch (error) {
-        res.status(400).json({
-            status: "error",
-            message: error.message,
-        });
+        res.status(400).json({ error: error.message });
     }
 };
 
 exports.updateTimetable = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedTimetable = await Lecturertimetable.findByIdAndUpdate(
-            id,
-            req.body,
-            { new: true }
-        );
+        const { days } = req.body; 
+        const updatedTimetable = await Lecturertimetable.findByIdAndUpdate(id, { days }, { new: true });
         if (!updatedTimetable) {
-            return res.status(404).json({
-                status: "error",
-                message: "Timetable not found",
-            });
+            return res.status(404).json({ message: 'Timetable not found' });
         }
-        res.status(200).json({
-            status: "success",
-            data: {
-                timetable: updatedTimetable,
-            },
-        });
+        res.status(200).json({ message: 'Timetable updated successfully', data: updatedTimetable });
     } catch (error) {
-        res.status(400).json({
-            status: "error",
-            message: error.message,
-        });
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -91,19 +60,11 @@ exports.deleteTimetable = async (req, res) => {
         const { id } = req.params;
         const deletedTimetable = await Lecturertimetable.findByIdAndDelete(id);
         if (!deletedTimetable) {
-            return res.status(404).json({
-                status: "error",
-                message: "Timetable not found",
-            });
+            return res.status(404).json({ message: 'Timetable not found' });
         }
-        res.status(200).json({
-            status: "success",
-            message: "Timetable deleted successfully",
-        });
+        res.status(200).json({ message: 'Timetable deleted successfully' });
     } catch (error) {
-        res.status(400).json({
-            status: "error",
-            message: error.message,
-        });
+        res.status(400).json({ error: error.message });
     }
 };
+

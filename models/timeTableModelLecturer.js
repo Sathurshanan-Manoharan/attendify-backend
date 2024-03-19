@@ -5,6 +5,10 @@ const sessionSchema = new mongoose.Schema({
   end_time: { type: String, required: true },
   lecture_title: { type: String, required: true },
   venue: { type: String, required: true },
+  group_name: { type: String, required: true },
+  level_name: { type: String, required: true },
+  course_type: {type: String,required: true},
+
 });
 
 const daySchema = new mongoose.Schema({
@@ -12,16 +16,9 @@ const daySchema = new mongoose.Schema({
   sessions: [sessionSchema],
 });
 
-const tutorialGroupSchema = new mongoose.Schema({
-  group_name: { type: String, required: true },
-  days: [daySchema],
-});
-
 const timetableSchema = new mongoose.Schema({
-  timetable_id: { type: String, required: true },
-  level_name: { type: String, required: true },
-  course_type: {type: String,required: true},
-  tutorial_groups: [tutorialGroupSchema],
+  lecturerEmail: { type: String, required: true },
+  days: [daySchema],
 });
 
 const Lecturertimetable = mongoose.model('lecturerTimetable', timetableSchema);

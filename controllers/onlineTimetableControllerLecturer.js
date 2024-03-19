@@ -2,23 +2,9 @@ const multer = require('multer');
 const fs = require('fs');
 const csvParser = require('csv-parser');
 const Timetable = require('../models/timeTableModelLecturer.js');
-//const upload = multer({ dest: 'timetableupload/' });
+const upload = multer({ dest: 'timetableupload' });
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'timetableupload/');
-    },
-    filename: function (req, file, cb) {
-      const originalFileName = file.originalname;
-      cb(null, originalFileName);
-    }
-  });
-  
-  
-  //Sends the csv data to the specified location
-  const upload = multer({ storage: storage});
-
-exports.uploadTimetable = async (req, res) => {
+exports.uploadTimetableTwo = async (req, res) => {
     upload.single('csvFile')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
             return res.status(500).json({ error: 'Internal Server Error' });
@@ -35,14 +21,13 @@ exports.uploadTimetable = async (req, res) => {
         fs.createReadStream(req.file.path)
             .pipe(csvParser())
             .on('data', (row) => {
-                csvData.push(row); // Push each row directly into csvData
+                csvData.push(row);
             })
             .on('end', async () => {
-                // Process the CSV data and save to the database
+                
                 try {
-                    // Parse courseType, selectedTutorialGroups, and level from the request body
-                    const { lecturerEmail } = req.body;
-                    await processCSVData(csvData, { lecturerEmail });
+                   
+                    await processCSVData(csvData, req.body);
                     res.json({ message: 'CSV data processed and saved successfully' });
                     console.log('CSV file processed successfully');
 
@@ -61,13 +46,7 @@ exports.uploadTimetable = async (req, res) => {
             });
     });
 };
-async function processCSVData(csvData, req) {
-    const lecturerEmail = req.lecturerEmail.trim(); 
-
-    // Define an array to store tutorial groups
-    let selectedTutorialGroups = [];
-
-    // Create an object to store sessions grouped by day
+async function processCSVData(csvData, lecturerEmailEntered) {
     const sessionsByDay = {
         Monday: [],
         Tuesday: [],
@@ -78,48 +57,36 @@ async function processCSVData(csvData, req) {
         Sunday: []
     };
 
-    // Loop through the CSV data to process each row
     for (const row of csvData) {
-        const { day, startTime, endTime, moduleName, moduleCode, venue, level, tutorialGroups, courseType } = row;
+        const { day, startTime, endTime, moduleName, venue, level, tutorialGroups, courseType } = row;
 
-        // Create session object
+        
         const session = {
-            start_time: startTime.trim(),
-            end_time: endTime.trim(),
-            lecture_title: moduleName.trim(),
-            venue: venue.trim(),
+            start_time: startTime,
+            end_time: endTime,
+            lecture_title: moduleName,
+            venue: venue,
+            group_name: tutorialGroups, 
+            level_name: level,
+            course_type: courseType,
         };
 
-        // Push session to the corresponding day
         sessionsByDay[day.trim()].push(session);
-
-        // Extract and add tutorial groups to the selectedTutorialGroups array
-        const groupsArray = tutorialGroups.split(',').map(group => group.trim());
-        selectedTutorialGroups = selectedTutorialGroups.concat(groupsArray);
     }
 
-    // Deduplicate the tutorial groups array
-    selectedTutorialGroups = [...new Set(selectedTutorialGroups)];
+    
+    const days = Object.keys(sessionsByDay).map(day => ({
+        day,
+        sessions: sessionsByDay[day],
+    }));
 
-    // Create new time table entry
-    const newTimeTableEntry = new Timetable({
-        timetable_id: lecturerEmail,
-        level_name: "level",
-        course_type: "courseType",
-        tutorial_groups: selectedTutorialGroups.map(group_name => ({
-            group_name,
-            days: Object.entries(sessionsByDay).map(([day, sessions]) => ({
-                day,
-                sessions
-            }))
-        }))
-    });
+    const newTimeTableEntry = new Timetable({ lecturerEmail: lecturerEmailEntered.lecturerEmail, days });
 
     try {
         await newTimeTableEntry.validate();
         await newTimeTableEntry.save();
     } catch (error) {
-        console.error('Error saving time table entry:', error);
+        console.error('Error saving timetable entry:', error);
         throw error;
     }
 }
