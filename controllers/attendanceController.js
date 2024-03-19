@@ -2,7 +2,7 @@ const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
 const Timetable = require("../models/timeTableModel");
 const UserStudent = require("../models/studentModel");
-const multer = require('multer');
+const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -36,7 +36,6 @@ exports.uploadAttendance = async (req, res) => {
     res.json({ message: "File uploaded successfully" });
   });
 };
-
 
 exports.getAllAttendance = async (req, res) => {
   try {
@@ -75,8 +74,8 @@ exports.createAttendance = async (req, res) => {
 
 exports.markAttendance = async (req, res) => {
   try {
-    const currentTime = moment().tz('Asia/Colombo');
-    const currentTimeString = moment().tz('Asia/Colombo').format('hh:mm A');
+    const currentTime = moment().tz("Asia/Colombo");
+    const currentTimeString = moment().tz("Asia/Colombo").format("hh:mm A");
 
     const user = await UserStudent.findOne({ uid: req.params.id });
 
@@ -86,14 +85,21 @@ exports.markAttendance = async (req, res) => {
         start_time: { $lte: currentTime },
         end_time: { $gte: currentTime },
         //Check if element with user_is is already present in the array
-        students_present: { $not: { $elemMatch: { user_id: user.studentID } } }
+        students_present: {
+          $not: { $elemMatch: { studentID: user.studentID } },
+        },
       },
       //Appends an object comprised of StudentID and Check-in Time to Array
-      { $addToSet: { students_present: { user_id: user.studentID, check_in_time: currentTimeString} } },
+      {
+        $addToSet: {
+          students_present: {
+            studentID: user.studentID,
+            check_in_time: currentTimeString,
+          },
+        },
+      },
       { new: true }
     );
-
-    
 
     if (!attendance) {
       //Is also displayed if the same user tries to check-in twice
@@ -185,21 +191,32 @@ exports.createAttendanceFromTimetable = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
   try {
-    // find attendance by id and populate the students_present array
+    const attendance = await Attendance.findById(req.params.id);
 
-    const attendance = await Attendance.findById(req.params.id).populate('students_present.studentID');
+    const studentIDs = attendance.students_present.map(
+      (student) => student.studentID
+    );
 
-    //i want to get the students present array
-    const studentsPresent = attendance.students_present;
-    // now send the students present array to the client
+    const studentsInfoPromises = studentIDs.map((studentID) =>
+      UserStudent.findOne({ studentID })
+    );
+
+    const studentsInfo = await Promise.all(studentsInfoPromises);
+    
+    const studentsPresent = attendance.students_present.map(
+      (student, index) => ({
+        studentID: student.studentID,
+        studentInfo: studentsInfo[index],
+        check_in_time: student.check_in_time,
+        date: attendance.date,
+      })
+    );
     res.status(200).json({
       status: "success",
       data: {
         studentsPresent,
       },
     });
-
-    
   } catch (err) {
     res.status(404).json({
       status: "fail",
