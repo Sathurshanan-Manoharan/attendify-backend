@@ -23,7 +23,7 @@ app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/timetable', timetableRouter);
 app.use('/api/v1/student', studentRouter);
 app.use('/api/v1/lecturer', lecturerRouter);
-app.use('/api/v1/uploadtimetablelecturer', timetableRouterLecturer);
+app.use('/api/v1/timetablelecturer', timetableRouterLecturer);
 
 
 module.exports = app;

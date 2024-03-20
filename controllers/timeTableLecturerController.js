@@ -68,3 +68,26 @@ exports.deleteTimetable = async (req, res) => {
     }
 };
 
+exports.readTimetableById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const timetableData = await Lecturertimetable.findOne({ lecturerEmail : id });
+        if (!timetableData) {
+            return res.status(404).json({
+                status: "error",
+                message: "Timetable not found",
+            });
+        }
+        res.status(200).json({
+            status: "success",
+            data: {
+                timetable: timetableData,
+            },
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "error",
+            message: error.message,
+        });
+    }
+};

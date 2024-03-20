@@ -7,4 +7,9 @@ router.route("/")
   .post(userController.createStudent) 
   .get(userController.getAllStudents); 
 
+router.route("/student/:id")
+  .get(userController.getStudentByEmail);
+
+
+
 module.exports = router;

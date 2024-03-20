@@ -1,6 +1,6 @@
 const express = require("express");
 const timeTableLecturerController = require("../controllers/timeTableLecturerController");
-const onlineTimetableControllerLecturer = require("../controllers/onlineTimetableControllerLecturer"); // Correct the case here
+const onlineTimetableControllerLecturer = require("../controllers/onlineTimetableControllerLecturer"); 
 const router = express.Router();
 
 // Routes for time table lecturer
@@ -14,6 +14,9 @@ router.route("/:id")
 
 // Route for uploading timetable by lecturer
 router.route("/") // Correct the route path
-  .post(onlineTimetableControllerLecturer.uploadTimetableTwo); // Use the correct case for the controller method
+  .post(onlineTimetableControllerLecturer.uploadTimetableTwo); 
+
+  router.route("/timetablelecturer/:id")
+  .get(timeTableLecturerController.readTimetableById)
 
 module.exports = router;

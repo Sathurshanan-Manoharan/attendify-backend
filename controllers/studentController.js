@@ -55,3 +55,36 @@ exports.getAllStudents = async (req, res) => {
     });
   }
 };
+
+exports.getStudentByEmail = async (req, res) => {
+  try {
+      // Extract the email address from the request parameters
+      const { id } = req.params;
+
+      // Find the student in the database based on the email address
+      const student = await Student.findOne({ iitEmail: id });
+
+      // Check if the student was found
+      if (!student) {
+          // If not found, return a 404 error response
+          return res.status(404).json({
+              status: "fail",
+              message: "Student not found",
+          });
+      }
+
+      // If found, return a success response with the student data
+      res.status(200).json({
+          status: "success",
+          data: {
+              student,
+          },
+      });
+  } catch (error) {
+      // If an error occurs during the process, return a 500 error response
+      res.status(500).json({
+          status: "error",
+          message: error.message,
+      });
+  }
+};
