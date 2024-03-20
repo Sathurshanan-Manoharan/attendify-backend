@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
 
-// Define the route for fetching expected student count
-router.get('/lecturer/:lecturerId/sessionDetails', dashboardController.getSessionDetails);
+router.get('/lecturer/:lecturerEmail/sessionDetails', dashboardController.getSessionDetails);
+router.get('/lecturer/sessions/:lecturerEmail', dashboardController.getLecturerSessions);
 
 module.exports = router;
