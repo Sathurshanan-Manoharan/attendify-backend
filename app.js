@@ -5,6 +5,7 @@ const timetableRouter = require('./routes/timeTableRoutes');
 const studentRouter = require('./routes/studentRoutes');
 const lecturerRouter = require('./routes/lecturerRoutes');
 const dashboardRouter = require('./routes/dashboardRoutes'); // Import the dashboard router
+const timetableRouterLecturer = require('./routes/timeTableLecturerRoutes')
 const cors = require('cors');
 const port = 5173;
 
@@ -22,5 +23,7 @@ app.use('/api/v1/attendance', attendanceRouter);
 app.use('/api/v1/timetable', timetableRouter);
 app.use('/api/v1/student', studentRouter);
 app.use('/api/v1/lecturer', lecturerRouter);
+app.use('/api/v1/uploadtimetablelecturer', timetableRouterLecturer);
+
 
 module.exports = app;
