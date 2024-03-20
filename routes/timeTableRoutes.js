@@ -9,6 +9,10 @@ router.route("/")
   .post(timeTableController.createTimeTable)
   .get(timeTableController.readTimetable);
 
+router.route("/tutorialgroup/:id")
+  .get(timeTableController.readTimetableById)
+  
+
 router.route("/:id")
   .put(timeTableController.updateTimetable)
   .delete(timeTableController.deleteTimetable);
