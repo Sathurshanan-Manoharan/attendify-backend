@@ -2,40 +2,6 @@ const moment = require("moment-timezone");
 const Attendance = require("../models/attendanceModel");
 const Timetable = require("../models/timeTableModel");
 const UserStudent = require("../models/studentModel");
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    const originalFileName = file.originalname;
-    cb(null, originalFileName);
-  },
-});
-
-//Sends the csv data to the specified location
-const upload = multer({ storage: storage });
-
-//Receives CSV file
-exports.uploadAttendance = async (req, res) => {
-  upload.single("csvFile")(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      return res.status(500).json({ error: "Internal Server Error" });
-    } else if (err) {
-      return res.status(400).json({ error: "Bad Request" });
-    }
-
-    if (!req.file) {
-      return res.status(400).json({ error: "No File Uploaded" });
-    }
-
-    //Test if received
-    console.log("File Received", req.file);
-
-    res.json({ message: "File uploaded successfully" });
-  });
-};
 
 exports.getAllAttendance = async (req, res) => {
   try {
