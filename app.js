@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({
-  origin: ['https://attendify-frontend-sigma.vercel.app', 'http://localhost:5173'],
+  origin: ['https://attendify-frontend-sigma.vercel.app', 'https://www.attendify.online', 'http://localhost:5173'],
 }));
 
 // Use the dashboard router
