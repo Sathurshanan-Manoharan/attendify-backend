@@ -11,9 +11,9 @@ router
 router.route("/createAttendance").post(attendanceController.createAttendanceFromTimetable);
 //Takes user UID
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
-router.route("/upload").post(attendanceController.uploadAttendance);
+router.route("/upload").post(onlineAttendanceController.uploadAttendance);
 //Processes csv and updates database
-router.route("/process-csv").get(onlineAttendanceController.processCSV);
+//router.route("/process-csv").get(onlineAttendanceController.processCSV);
 
 router.route("/:id").get(attendanceController.getAttendance);
 

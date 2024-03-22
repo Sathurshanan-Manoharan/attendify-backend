@@ -1,9 +1,55 @@
 const fs = require('fs');
 const path = require('path');
 const Attendance = require("../models/attendanceModel");
+let objectId;
 
-exports.processCSV = (req, res) => {
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const originalFileName = file.originalname;
+    cb(null, originalFileName);
+  },
+});
+
+//Sends the csv data to the specified location
+const upload = multer({ storage: storage });
+
+//Receives CSV file
+exports.uploadAttendance = async (req, res) => {
+
+  //Extracts the query parameter passed
+  objectId = req.query.objectId;
+
+  upload.single("csvFile")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json({ error: "Internal Server Error" });
+    } else if (err) {
+      return res.status(400).json({ error: "Bad Request" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No File Uploaded" });
+    }
+
+    //Test if received
+    console.log("File Received", req.file);
+    console.log("Object ID Received", objectId);
+
+    //res.json({ message: "File uploaded successfully" });
+
+    processCSV(req, res);
+
+  });
+};
+
+
+function processCSV(req, res) {
     const uploadsFolder = './uploads'; 
+    console.log(objectId);
 
     fs.readdir(uploadsFolder, (err, files) => {
         if (err) {
@@ -63,6 +109,7 @@ exports.processCSV = (req, res) => {
             const validEmails = filteredEmails.filter(email => emailPattern.test(email));
             
             const studentsPresent = validEmails.map(email => {
+                
                 const attendee = filteredAttendees.find(attendee => attendee.Email === email);
                 if (attendee) {
                     //Extract only the user ID from the email
@@ -75,7 +122,7 @@ exports.processCSV = (req, res) => {
                     formattedCheckInTime = formattedCheckInTime.slice(0, -1);
             
                     return {
-                        user_id: userId,
+                        studentID: userId,
                         check_in_time: formattedCheckInTime
                     };
                 } else {
@@ -85,23 +132,11 @@ exports.processCSV = (req, res) => {
             }).filter(Boolean);
 
 
-
-            Attendance.findOne({ lecture_title: "Introduction to Web" })
-            .then(attendance => {
-                if (attendance) {
-                    //Updates the student array with the student objects
-                    attendance.students_present = studentsPresent;
-                    //Start time and end time selection
-                    attendance.time_range = {
-                        start_time: "Mon Mar 18 2024 21:00:00 GMT+0530 (India Standard Time)", 
-                        end_time: "Mon Mar 18 2024 23:50:00 GMT+0530 (India Standard Time)", 
-                    };
-                    //Save the updated document
-                    return attendance.save();
-                } else {
-                    throw new Error('Attendance record not found');
-                }
-            })
+            Attendance.findOneAndUpdate(
+                { _id: objectId },
+                { $set: { students_present: studentsPresent } },
+                { new: true } // This option ensures that the updated document is returned
+            )
             .then(updatedAttendance => {
                 console.log('Attendance record updated successfully');
                 //Delete the CSV file after processing 
