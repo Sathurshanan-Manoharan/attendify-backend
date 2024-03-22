@@ -38,7 +38,7 @@ const studentSchema = new mongoose.Schema({
         required: [true, "A student must have a level"],
     },
 
-    tutorialGroup: {
+    tutorial_group: {
         type: String,
         required: [true, "A student must have a tutorial group"],
     },

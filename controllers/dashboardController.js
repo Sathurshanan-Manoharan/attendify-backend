@@ -1,6 +1,8 @@
 const Attendance = require("../models/attendanceModel");
 const Lecturertimetable = require("../models/timeTableModelLecturer");
 const LecturerModel = require("../models/lecturerModel");
+const StudentModel = require("../models/studentModel");
+const timeTableModel = require("../models/timeTableModel");
 const moment = require("moment");
 
 exports.getSessionDetails = async (req, res) => {
@@ -78,6 +80,58 @@ exports.getSessionDetails = async (req, res) => {
         onTime: onTime,
         absent: absent
       }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};
+
+exports.getStudentTimetable = async (req, res) => {
+  try {
+    const studentEmail = req.params.studentEmail;
+
+    const currentDay = moment().format("dddd");
+
+    // Find the student
+    const student = await StudentModel.findOne({
+      iitEmail: studentEmail
+    });
+
+    if (!student) {
+      return res.status(404).json({
+        status: "error",
+        message: "Student not found."
+      });
+    }
+
+    // Get the tutorial group for the student
+    const tutorialGroup = student.tutorial_group;
+
+    // Fetch timetable data for the tutorial group
+    const timetable = await timeTableModel.findOne({
+      'tutorial_groups.group_name': tutorialGroup
+    });
+
+    if (!timetable) {
+      return res.status(404).json({
+        status: "error",
+        message: "Timetable not found for the tutorial group."
+      });
+    }
+
+    // Find sessions for the current day
+    const sessionsForToday = timetable.tutorial_groups
+      .flatMap(group => group.days)
+      .filter(day => day.day === currentDay)
+      .flatMap(day => day.sessions);
+
+    // Send the sessions happening today
+    res.status(200).json({
+      status: "success",
+      sessionsForToday: sessionsForToday
     });
   } catch (err) {
     res.status(500).json({
