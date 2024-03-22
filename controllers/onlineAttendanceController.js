@@ -39,13 +39,15 @@ exports.uploadAttendance = async (req, res) => {
     console.log("File Received", req.file);
     console.log("Object ID Received", objectId);
 
-    res.json({ message: "File uploaded successfully" });
+    //res.json({ message: "File uploaded successfully" });
+
+    processCSV(req, res);
+
   });
 };
 
 
-//========================================
-exports.processCSV = (req, res) => {
+function processCSV(req, res) {
     const uploadsFolder = './uploads'; 
     console.log(objectId);
 
@@ -130,17 +132,11 @@ exports.processCSV = (req, res) => {
             }).filter(Boolean);
 
 
-            Attendance.findOne({ _id: objectId })
-            .then(attendance => {
-                if (attendance) {
-                    //Updates the student array with the student objects
-                    attendance.students_present = studentsPresent;
-                    //Save the updated document
-                    return attendance.save();
-                } else {
-                    throw new Error('Attendance record not found');
-                }
-            })
+            Attendance.findOneAndUpdate(
+                { _id: objectId },
+                { $set: { students_present: studentsPresent } },
+                { new: true } // This option ensures that the updated document is returned
+            )
             .then(updatedAttendance => {
                 console.log('Attendance record updated successfully');
                 //Delete the CSV file after processing 

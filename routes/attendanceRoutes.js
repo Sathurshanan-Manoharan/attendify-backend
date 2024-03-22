@@ -13,7 +13,7 @@ router.route("/createAttendance").post(attendanceController.createAttendanceFrom
 router.route("/markAttendance/:id").patch(attendanceController.markAttendance);
 router.route("/upload").post(onlineAttendanceController.uploadAttendance);
 //Processes csv and updates database
-router.route("/process-csv").get(onlineAttendanceController.processCSV);
+//router.route("/process-csv").get(onlineAttendanceController.processCSV);
 
 router.route("/:id").get(attendanceController.getAttendance);
 
