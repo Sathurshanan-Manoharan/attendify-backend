@@ -26,8 +26,10 @@ exports.uploadAttendance = async (req, res) => {
 
   upload.single("csvFile")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
+        console.log(err.stack);
       return res.status(500).json({ error: "Internal Server Error" });
     } else if (err) {
+        console.log(err.stack);
       return res.status(400).json({ error: "Bad Request" });
     }
 
